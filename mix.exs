@@ -25,8 +25,9 @@ defmodule MessageBlaster.MixProject do
       {:ex_aws, "~> 2.5"},
       {:ex_aws_sqs, "~> 3.4"},
       {:hackney, "~> 1.20"},
-      {:saxy, "~> 1.1"},
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:telemetry, "~> 1.3"},
+      {:saxy, "~> 1.5"},
     ]
   end
 end

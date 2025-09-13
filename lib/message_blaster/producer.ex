@@ -82,7 +82,7 @@ defmodule MessageBlaster.Producer do
   defp send_batch(%{schemas: schemas} = state) when map_size(schemas) == 0 do
     # Fallback: generate generic payload
     body = generic_random_json()
-    publish(body)
+    publish(body, state)
     state
   end
   defp send_batch(%{schemas: schemas, schema_cycle: []} = state) do
@@ -95,14 +95,18 @@ defmodule MessageBlaster.Producer do
     schema = Map.fetch!(schemas, schema_name)
     payload = AvroGenerator.generate(schema)
     body = Jason.encode!(payload)
-    publish(body)
+    publish(body, state)
     %{state | schema_cycle: rest}
   end
 
-  defp publish(body) do
+  defp publish(body, state) do
     json = if is_binary(body), do: body, else: Jason.encode!(body)
     case SQSPublisher.send_message(json) do
-      :ok -> :ok
+      :ok ->
+        :telemetry.execute([
+          :message_blaster, :producer, :sent
+        ], %{}, %{json: json, rate: state.rate, schemas: Map.keys(state.schemas)})
+        :ok
       {:error, _} -> :ok
     end
   end
