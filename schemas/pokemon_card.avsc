@@ -1,0 +1,33 @@
+{
+  "type": "record",
+  "name": "PokemonCard",
+  "namespace": "com.example.cards",
+  "fields": [
+    {"name": "id", "type": "string"},
+    {"name": "name", "type": "string"},
+    {"name": "set", "type": "string"},
+    {"name": "rarity", "type": "string"},
+    {"name": "condition", "type": "string"},
+    {"name": "card_number", "type": "int"},
+    {"name": "value_usd", "type": "double"},
+    {"name": "market_trend", "type": {"type": "enum", "name": "Trend", "symbols": ["rising", "falling", "stable"]}},
+    {"name": "last_sold_date", "type": "string"},
+    {"name": "seller_location", "type": "string"},
+    {"name": "listing_type", "type": {"type": "enum", "name": "ListingType", "symbols": ["auction", "buy_it_now", "best_offer"]}},
+    {"name": "shipping_cost", "type": "double"},
+    {"name": "watchers", "type": "int"},
+    {"name": "timestamp", "type": "string"},
+    {"name": "metadata", "type": {
+      "type": "record",
+      "name": "Metadata",
+      "fields": [
+        {"name": "generation", "type": "int"},
+        {"name": "type", "type": "string"},
+        {"name": "hp", "type": "int"},
+        {"name": "holographic", "type": "boolean"},
+        {"name": "first_edition", "type": "boolean"},
+        {"name": "shadowless", "type": "boolean"}
+      ]
+    }}
+  ]
+}
