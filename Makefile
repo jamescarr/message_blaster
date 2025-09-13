@@ -103,3 +103,15 @@ py-shell:
 
 py-lock:
 	poetry lock --no-update
+
+.PHONY: connector-apply connector-status connector-delete
+connector-apply:
+	curl -s -X PUT -H 'Content-Type: application/json' \
+	  --data @connectors/sqs-sink.json \
+	  http://localhost:8083/connectors/sqs-sink/config | jq .
+
+connector-status:
+	curl -s http://localhost:8083/connectors/sqs-sink/status | jq .
+
+connector-delete:
+	curl -s -X DELETE http://localhost:8083/connectors/sqs-sink | jq .

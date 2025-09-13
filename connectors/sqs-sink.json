@@ -1,0 +1,15 @@
+{
+  "name": "sqs-sink",
+  "config": {
+    "connector.class": "io.lenses.streamreactor.connect.aws.sqs.sink.SqsSinkConnector",
+    "tasks.max": "2",
+    "topics.regex": "events\..*",
+    "aws.access.key": "fake",
+    "aws.secret.key": "fake",
+    "aws.region": "us-east-1",
+    "aws.endpoint": "http://localstack:4566",
+    "sqs.queue.url": "http://localstack:4566/000000000000/message-blaster-events",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "value.converter.schema.registry.url": "http://schema-registry:8081"
+  }
+}

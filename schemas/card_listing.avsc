@@ -1,0 +1,24 @@
+{
+  "type": "record",
+  "name": "CardListing",
+  "namespace": "com.example.events",
+  "fields": [
+    {"name": "listing_id", "type": "string"},
+    {"name": "card_id", "type": "string"},
+    {"name": "seller_id", "type": "string"},
+    {"name": "listed_price_usd", "type": "double"},
+    {"name": "currency", "type": {"type": "enum", "name": "Currency2", "symbols": ["USD", "EUR", "JPY", "GBP", "AUD", "CAD"]}},
+    {"name": "created_at", "type": "string"},
+    {"name": "status", "type": {"type": "enum", "name": "ListingStatus", "symbols": ["ACTIVE", "SOLD", "CANCELLED", "EXPIRED"]}},
+    {"name": "platform", "type": {"type": "enum", "name": "ListingPlatform", "symbols": ["EBAY", "TCGPLAYER", "PWCC", "GOLDIN", "OTHER"]}},
+    {"name": "metadata", "type": {
+      "type": "record",
+      "name": "ListingMetadata",
+      "fields": [
+        {"name": "shipping_options", "type": {"type": "array", "items": "string"}},
+        {"name": "accepts_offers", "type": "boolean"},
+        {"name": "min_offer_percent", "type": ["null", "double"], "default": null}
+      ]
+    }}
+  ]
+}

@@ -10,6 +10,11 @@ defmodule MessageBlaster.SchemaLoader do
   @spec load_all() :: %{optional(String.t()) => schema_map}
   def load_all do
     path = Application.get_env(:message_blaster, :schemas, []) |> Keyword.get(:path, "./schemas")
+    load_all(path)
+  end
+
+  @spec load_all(String.t()) :: %{optional(String.t()) => schema_map}
+  def load_all(path) when is_binary(path) do
     with {:ok, files} <- File.ls(path) do
       files
       |> Enum.filter(&String.ends_with?(&1, ".avsc"))
@@ -33,10 +38,10 @@ defmodule MessageBlaster.SchemaLoader do
       end)
     else
       {:error, :enoent} ->
-        Logger.warning("Schemas path not found; skipping schema load")
+        Logger.warning("Schemas path not found: #{path}; skipping schema load")
         %{}
       {:error, reason} ->
-        Logger.error("Failed to list schemas: #{inspect(reason)}")
+        Logger.error("Failed to list schemas at #{path}: #{inspect(reason)}")
         %{}
     end
   end

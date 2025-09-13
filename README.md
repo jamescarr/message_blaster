@@ -146,3 +146,56 @@ brew install poetry # if not installed
 make py-setup       # installs boto3 in a poetry venv
 make py-run         # runs the consumer via poetry
 ```
+
+## Schema-based Generation
+Message Blaster can read all Avro schemas in a directory and generate random JSON that conforms to each schema.
+
+- Schema directory (default): `schemas/`
+- Configure dir env var: `SCHEMA_DIR=...`
+- Select which schemas to publish with `SCHEMAS` (comma-separated, supports `*` wildcards). If unset, all schemas are used.
+- Optional registration: set `SCHEMA_REGISTRY_URL` to register each loaded schema; if unset, registration is skipped.
+
+Examples:
+```bash
+# Use all schemas found in ./schemas at 5 msg/s per schema
+RATE=5 make start
+
+# Explicit schema directory
+RATE=2 SCHEMA_DIR=schemas make start
+
+# Select specific fully-qualified schema names
+RATE=10 SCHEMAS=com.example.cards.PokemonCard,com.example.events.CardSale make start
+
+# Use wildcards to select a namespace
+RATE=3 SCHEMAS='com.example.*' make start
+
+# Skip schema registration (default behavior): do not set SCHEMA_REGISTRY_URL
+# Register with a running Schema Registry (optional)
+export SCHEMA_REGISTRY_URL=http://localhost:8081
+RATE=5 SCHEMAS='com.example.*' make start
+```
+
+Sample schemas included in `schemas/`:
+- `com.example.cards.PokemonCard`
+- `com.example.events.CardSale`
+- `com.example.events.CardListing`
+- `com.example.events.CardOffer`
+
+End-to-end quickstart:
+```bash
+# 1) Start LocalStack
+make stack-up
+
+# 2) Create SQS queue
+make queue
+
+# 3) Start producer with all schemas at 2 msg/s
+RATE=2 SCHEMA_DIR=schemas make start
+
+# 4) In another terminal, run the consumer
+# Preferred: Poetry
+make py-setup
+make py-run
+# Or fallback
+make consumer
+```

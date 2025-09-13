@@ -95,7 +95,7 @@ defmodule MessageBlaster.AvroGenerator do
 
   defp random_string(n) do
     for _ <- 1..n, into: "" do
-      <<Enum.random('abcdefghijklmnopqrstuvwxyz')>>
+      <<Enum.random(~c"abcdefghijklmnopqrstuvwxyz")>>
     end
   end
 end

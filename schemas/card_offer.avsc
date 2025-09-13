@@ -1,0 +1,24 @@
+{
+  "type": "record",
+  "name": "CardOffer",
+  "namespace": "com.example.events",
+  "fields": [
+    {"name": "offer_id", "type": "string"},
+    {"name": "card_id", "type": "string"},
+    {"name": "buyer_id", "type": "string"},
+    {"name": "seller_id", "type": "string"},
+    {"name": "offer_price_usd", "type": "double"},
+    {"name": "currency", "type": {"type": "enum", "name": "Currency3", "symbols": ["USD", "EUR", "JPY", "GBP", "AUD", "CAD"]}},
+    {"name": "created_at", "type": "string"},
+    {"name": "expires_at", "type": ["null", "string"], "default": null},
+    {"name": "status", "type": {"type": "enum", "name": "OfferStatus", "symbols": ["PENDING", "ACCEPTED", "REJECTED", "WITHDRAWN", "EXPIRED"]}},
+    {"name": "metadata", "type": {
+      "type": "record",
+      "name": "OfferMetadata",
+      "fields": [
+        {"name": "message", "type": ["null", "string"], "default": null},
+        {"name": "counter_offer_usd", "type": ["null", "double"], "default": null}
+      ]
+    }}
+  ]
+}

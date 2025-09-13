@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "CardSale",
+  "namespace": "com.example.events",
+  "fields": [
+    {"name": "sale_id", "type": "string"},
+    {"name": "card_id", "type": "string"},
+    {"name": "buyer_id", "type": "string"},
+    {"name": "seller_id", "type": "string"},
+    {"name": "price_usd", "type": "double"},
+    {"name": "currency", "type": {"type": "enum", "name": "Currency", "symbols": ["USD", "EUR", "JPY", "GBP", "AUD", "CAD"]}},
+    {"name": "sale_date", "type": "string"},
+    {"name": "marketplace", "type": {"type": "enum", "name": "Marketplace", "symbols": ["EBAY", "TCGPLAYER", "PWCC", "GOLDIN", "OTHER"]}},
+    {"name": "payment_method", "type": {"type": "enum", "name": "PaymentMethod", "symbols": ["CREDIT_CARD", "PAYPAL", "WIRE", "CRYPTO", "OTHER"]}},
+    {"name": "metadata", "type": {
+      "type": "record",
+      "name": "SaleMetadata",
+      "fields": [
+        {"name": "fees_usd", "type": "double"},
+        {"name": "shipping_cost_usd", "type": "double"},
+        {"name": "tax_usd", "type": "double"},
+        {"name": "notes", "type": ["null", "string"], "default": null}
+      ]
+    }}
+  ]
+}
