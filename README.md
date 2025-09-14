@@ -199,3 +199,57 @@ make py-run
 # Or fallback
 make consumer
 ```
+
+## How it works
+
+```mermaid
+dagraph TD
+  subgraph App[Message Blaster (Elixir)]
+    SL[Schema Loader\nreads *.avsc] --> SRG[(Optional)\nSchema Registry]
+    GEN[Avro Generator\n(random data)] --> PUB[Publisher]
+    SET[Config\n(RATE, SCHEMA_DIR, SCHEMAS)] --> GEN
+  end
+
+  PUB -- direct mode --> SQS[(LocalStack SQS)]
+
+  PUB -- kafka mode --> K[(Kafka)]
+  K --> KC[Kafka Connect\nSQS Sink]
+  KC --> SQS
+```
+
+- Direct SQS mode (default): Producer publishes JSON directly to LocalStack SQS.
+- Kafka mode (optional): Publish to Kafka topics, then Kafka Connect SQS Sink delivers to SQS.
+- Schemas: All `*.avsc` in `SCHEMA_DIR` are loaded; `SCHEMAS` filters by comma-separated list with `*` wildcards.
+
+## Connector configuration (Kafka mode)
+- Connector config lives at `connectors/sqs-sink.json` and is posted on startup by `connect-init`.
+- Edit that file to change topic selection, queue URL, region, etc.
+- Manual management (optional):
+```bash
+make connector-apply
+make connector-status
+make connector-delete
+```
+
+## Run modes at a glance
+- Direct to SQS (no Kafka):
+```bash
+make stack-up     # starts LocalStack only (plus Kafka stack; OK to ignore if unused)
+make queue        # create the SQS queue
+RATE=5 SCHEMAS='com.example.*' make start
+make consumer     # or poetry targets
+```
+
+- Kafka → Connect → SQS:
+```bash
+make stack-up
+make queue
+export SCHEMA_REGISTRY_URL=http://localhost:8081
+make connector-apply
+RATE=5 SCHEMAS='com.example.*' make start
+```
+
+### Notes
+- If you don't need Kafka/Connect, you can still run `make stack-up` (Kafka stack also starts) and just use direct SQS.
+- If Kafka Connect reports plugin errors, ensure the SQS sink connector jar(s) are under `connect-plugins/` or use an image that includes it.
+- Schema registration is optional: if `SCHEMA_REGISTRY_URL` is unset, schemas are not registered.
