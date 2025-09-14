@@ -203,17 +203,17 @@ make consumer
 ## How it works
 
 ```mermaid
-dagraph TD
+graph TD
   subgraph App[Message Blaster (Elixir)]
-    SL[Schema Loader\nreads *.avsc] --> SRG[(Optional)\nSchema Registry]
-    GEN[Avro Generator\n(random data)] --> PUB[Publisher]
-    SET[Config\n(RATE, SCHEMA_DIR, SCHEMAS)] --> GEN
+    SL[Schema Loader<br/>reads *.avsc] --> SRG[(Optional)<br/>Schema Registry]
+    GEN[Avro Generator<br/>(random data)] --> PUB[Publisher]
+    SET[Config<br/>(RATE, SCHEMA_DIR, SCHEMAS)] --> GEN
   end
 
   PUB -- direct mode --> SQS[(LocalStack SQS)]
 
   PUB -- kafka mode --> K[(Kafka)]
-  K --> KC[Kafka Connect\nSQS Sink]
+  K --> KC[Kafka Connect<br/>SQS Sink]
   KC --> SQS
 ```
 
