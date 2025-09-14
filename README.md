@@ -204,8 +204,8 @@ make consumer
 
 ```mermaid
 graph TD
-  subgraph App[Message Blaster (Elixir)]
-    SL[Schema Loader<br/>reads *.avsc] --> SRG[(Optional)<br/>Schema Registry]
+  subgraph App
+    SL[Schema Loader<br/>reads *.avsc] --> SRG[(Optional<br/>Schema Registry)]
     GEN[Avro Generator<br/>(random data)] --> PUB[Publisher]
     SET[Config<br/>(RATE, SCHEMA_DIR, SCHEMAS)] --> GEN
   end
