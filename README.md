@@ -253,3 +253,44 @@ RATE=5 SCHEMAS='com.example.*' make start
 - If you don't need Kafka/Connect, you can still run `make stack-up` (Kafka stack also starts) and just use direct SQS.
 - If Kafka Connect reports plugin errors, ensure the SQS sink connector jar(s) are under `connect-plugins/` or use an image that includes it.
 - Schema registration is optional: if `SCHEMA_REGISTRY_URL` is unset, schemas are not registered.
+
+## Live tuning via Erlang distribution
+You can connect to the running node and adjust the producer at runtime.
+
+### Option 1: Start the app as a named node
+```bash
+# in message_blaster/
+COOKIE=secret
+iex --name blaster@127.0.0.1 --cookie $COOKIE -S mix
+# then start the producer as usual (or via mix mb.start)
+```
+
+From another terminal, connect as a control node and tune the rate:
+```bash
+COOKIE=secret
+iex --name ctl@127.0.0.1 --cookie $COOKIE
+
+# Increase rate to 50 msg/s per schema
+:rpc.call(:'blaster@127.0.0.1', MessageBlaster.Producer, :set_rate, [50])
+
+# Inspect current state (rate, schemas, etc.)
+:rpc.call(:'blaster@127.0.0.1', :sys, :get_state, [MessageBlaster.Producer])
+
+# Stop producing
+:rpc.call(:'blaster@127.0.0.1', MessageBlaster.Producer, :stop_producing, [])
+```
+
+### Option 2: Remote shell into the running node
+```bash
+COOKIE=secret
+# Attach directly to the running node's shell
+iex --remsh blaster@127.0.0.1 --name ctl@127.0.0.1 --cookie $COOKIE
+
+# Now you’re on the blaster node; call directly:
+MessageBlaster.Producer.set_rate(25)
+:sys.get_state(MessageBlaster.Producer)
+```
+
+Tips:
+- Ensure the cookie and host (127.0.0.1) match between nodes.
+- If you started the producer via `make start`, you can still open a named `iex` on the same machine and use `--remsh` to attach as above (start the app with a name for discovery).
