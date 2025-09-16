@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Copy to .envrc and run `direnv allow`
+
+# Local AWS/LocalStack
+export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-fake}
+export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-fake}
+export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+export AWS_REGION=${AWS_REGION:-$AWS_DEFAULT_REGION}
+
+# LocalStack endpoint (SQS)
+export SQS_ENDPOINT=${SQS_ENDPOINT:-http://localhost:4566}
+export AWS_ENDPOINT_URL=${AWS_ENDPOINT_URL:-$SQS_ENDPOINT}
+
+# SQS queue for Message Blaster
+export SQS_QUEUE_URL=${SQS_QUEUE_URL:-http://localhost:4566/000000000000/message-blaster-events}
+
+# Message Blaster schema settings
+export MB_SCHEMAS_PATH=${MB_SCHEMAS_PATH:-./schemas}
+# Comma-separated list; supports * wildcards. Example: com.example.*
+# export SCHEMAS="com.example.cards.PokemonCard,com.example.events.CardSale"
+# Default send rate (msgs/sec per schema) if not provided via env/RATE
+export MB_DEFAULT_RATE=${MB_DEFAULT_RATE:-5}
+
+# Optional: Confluent Schema Registry (for Kafka mode)
+# export SCHEMA_REGISTRY_URL=http://localhost:8081
+
+# Optional: Kafka/Connect (for Kafka → SQS mode)
+# export KAFKA_BOOTSTRAP=localhost:9092
+# export KAFKA_CONNECT_URL=http://localhost:8083
+
+# Logging
+export LOG_JSON=${LOG_JSON:-false}
+
+# Friendly summary
+echo "[direnv] Loaded Message Blaster env"
+echo "  AWS_REGION=$AWS_REGION  SQS_ENDPOINT=$SQS_ENDPOINT"
+echo "  SQS_QUEUE_URL=$SQS_QUEUE_URL"
+echo "  MB_SCHEMAS_PATH=$MB_SCHEMAS_PATH  MB_DEFAULT_RATE=$MB_DEFAULT_RATE"
+echo "  SCHEMA_REGISTRY_URL=${SCHEMA_REGISTRY_URL:-<unset>}  KAFKA=${KAFKA_BOOTSTRAP:-<unset>}  CONNECT=${KAFKA_CONNECT_URL:-<unset>}"
